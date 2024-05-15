@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "710733939276",
+    "project_id": "livraison-d616e",
+    "storage_bucket": "livraison-d616e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:710733939276:android:56aa8c8e7e571da162eae9",
+        "android_client_info": {
+          "package_name": "com.example.pharmacy_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC_dr5hFgFiA27ebi4dDJPV3wUv9W0TySw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
