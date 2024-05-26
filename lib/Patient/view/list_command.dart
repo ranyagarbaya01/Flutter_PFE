@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pharmacy_app/Home_pages/homepage.dart';
 import 'package:pharmacy_app/Patient/controller/list_command_controller.dart';
-import 'package:pharmacy_app/Patient/model/commande_model.dart';
 import 'package:pharmacy_app/Patient/view/list_medicament_details.dart';
 import 'package:pharmacy_app/Patient/view/list_ordonnances_details.dart';
 
@@ -16,6 +15,13 @@ class ListCommand extends StatefulWidget {
 class _ListCommandState extends State<ListCommand> {
   final ListCommandeController listCommandController =
       Get.put(ListCommandeController());
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    listCommandController.getCommand();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

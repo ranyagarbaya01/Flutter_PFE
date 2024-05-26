@@ -34,12 +34,13 @@ class ListCommande {
               json['reservations'].map((v) => CommandMedic.fromJson(v)))
           : null,
       cnam: json['cnam'] != null ? File(json['cnam']) : null,
-      description: json['description'] ?? '',
-      confirmadresse: json['confirmadresse'] ?? '',
+      description: json['description']?.toString() ?? '',
+      confirmadresse: json['confirmadresse']?.toString() ?? '',
       ordonnance: json['ordonnance'] != null ? File(json['ordonnance']) : null,
-      pharmacies: json['pharmacies'] ?? '',
+      pharmacies: json['pharmacies']?.toString() ?? '',
     );
   }
+
   //method to string
   @override
   String toString() {

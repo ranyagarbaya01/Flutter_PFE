@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
@@ -8,14 +6,9 @@ import 'package:pharmacy_app/Patient/controller/panier_controller.dart';
 import 'package:pharmacy_app/Patient/view/payment_view.dart';
 import 'package:pharmacy_app/pharmacien/model/pharmacien_model.dart';
 
-import '../controller/commande_controller.dart';
-
 class Confirmation extends StatefulWidget {
-  String confirmation_adresse;
-
   Confirmation({
     Key? key,
-    required this.confirmation_adresse,
   }) : super(key: key);
 
   @override
@@ -31,7 +24,8 @@ class _ConfirmationState extends State<Confirmation> {
   Pharmacie? nearestPharmacie;
   bool isLoading = false;
 
- TextEditingController _adresseController = TextEditingController();
+  TextEditingController _adresseController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   Future<void> _getCurrentLocation() async {
     setState(() {
@@ -126,11 +120,20 @@ class _ConfirmationState extends State<Confirmation> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          TextField(
-            controller: _adresseController,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'Adresse de livraison',
+          Form(
+            key: _formKey,
+            child: TextFormField(
+              controller: _adresseController,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Veuillez entrer une adresse valide';
+                }
+                return null;
+              },
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Adresse de livraison',
+              ),
             ),
           ),
           SizedBox(height: 20),
@@ -195,15 +198,17 @@ class _ConfirmationState extends State<Confirmation> {
           Center(
             child: InkWell(
               onTap: () async {
-                print(nearestPharmacie?.id);
-                CommandController commandController = CommandController();
-                await commandController.createCommand(
-                  widget.confirmation_adresse,
-                  nearestPharmacie!.id!.toString(),
-                  context,
-                );
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => Payment()));
+                if (_formKey.currentState!.validate()) {
+                  print(nearestPharmacie?.id);
+                  CommandController commandController = CommandController();
+                  await commandController.createCommand(
+                    _adresseController.text,
+                    nearestPharmacie!.id!.toString(),
+                    context,
+                  );
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => Payment()));
+                }
               },
               borderRadius: BorderRadius.circular(20),
               child: Container(

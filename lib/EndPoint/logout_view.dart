@@ -38,14 +38,12 @@ class _LogoutPageState extends State<LogoutPage> {
               final SharedPreferences sharedPreferences =
                   await SharedPreferences.getInstance();
               await sharedPreferences.remove('token');
-
-              
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
-              return HomePage();
-            }));
-            
             }
 
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) {
+              return HomePage();
+            }));
           },
           child: Text('Se déconnecter',
               style: TextStyle(

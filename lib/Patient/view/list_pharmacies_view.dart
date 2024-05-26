@@ -13,7 +13,6 @@ class ListPharmaciesDetails extends StatefulWidget {
   File image;
   File? image1;
   String? commentaire;
-
   String confirmationAdresse;
 
   ListPharmaciesDetails({
@@ -48,6 +47,9 @@ class _ListPharmaciesDetailsState extends State<ListPharmaciesDetails> {
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       // Location services are not enabled, prompt the user to enable them
+      setState(() {
+        isLoading = false; // Stop loading
+      });
       return showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -72,6 +74,9 @@ class _ListPharmaciesDetailsState extends State<ListPharmaciesDetails> {
     permission = await Geolocator.requestPermission();
     if (permission == LocationPermission.denied) {
       // Location permissions are denied, show error message
+      setState(() {
+        isLoading = false; // Stop loading
+      });
       return showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -100,7 +105,7 @@ class _ListPharmaciesDetailsState extends State<ListPharmaciesDetails> {
 
     // Calculate distance between current location and pharmacies
     for (var pharmacie in listPharmacieController.pharmacieList) {
-      double distance = await Geolocator.distanceBetween(
+      double distance = Geolocator.distanceBetween(
         position.latitude,
         position.longitude,
         pharmacie.latitude!,
@@ -198,7 +203,7 @@ class _ListPharmaciesDetailsState extends State<ListPharmaciesDetails> {
                   widget.image1,
                   widget.commentaire ?? '',
                   widget.confirmationAdresse,
-                  nearestPharmacie!.id!.toString() ?? '',
+                  nearestPharmacie!.id!.toString(),
                   context,
                 );
                 Navigator.push(context,
@@ -231,14 +236,35 @@ class _ListPharmaciesDetailsState extends State<ListPharmaciesDetails> {
   }
 }
 
+
+
+
+
+// import 'dart:io';
+
 // import 'package:flutter/material.dart';
+// import 'package:geolocator/geolocator.dart';
 // import 'package:get/get.dart';
 // import 'package:pharmacy_app/Patient/controller/list_pharmacies_controller.dart';
+// import 'package:pharmacy_app/Patient/view/payment_view.dart';
 // import 'package:pharmacy_app/pharmacien/model/pharmacien_model.dart';
-// import 'package:geolocator/geolocator.dart';
+
+// import '../controller/commande_controller.dart';
 
 // class ListPharmaciesDetails extends StatefulWidget {
-//   const ListPharmaciesDetails({Key? key}) : super(key: key);
+//   File image;
+//   File? image1;
+//   String? commentaire;
+
+//   String confirmationAdresse;
+
+//   ListPharmaciesDetails({
+//     Key? key,
+//     required this.image,
+//     this.image1,
+//     this.commentaire,
+//     required this.confirmationAdresse,
+//   }) : super(key: key);
 
 //   @override
 //   State<ListPharmaciesDetails> createState() => _ListPharmaciesDetailsState();
@@ -250,8 +276,13 @@ class _ListPharmaciesDetailsState extends State<ListPharmaciesDetails> {
 
 //   Pharmacie? selectedPharmacie;
 //   String _locationMessage = '';
+//   Pharmacie? nearestPharmacie;
+//   bool isLoading = false;
 
 //   Future<void> _getCurrentLocation() async {
+//     setState(() {
+//       isLoading = true; // Start loading
+//     });
 //     bool serviceEnabled;
 //     LocationPermission permission;
 
@@ -306,14 +337,34 @@ class _ListPharmaciesDetailsState extends State<ListPharmaciesDetails> {
 //     // Get current location
 //     final position = await Geolocator.getCurrentPosition(
 //         desiredAccuracy: LocationAccuracy.high);
+
+//     double nearestDistance = double.infinity;
+
+//     // Calculate distance between current location and pharmacies
+//     for (var pharmacie in listPharmacieController.pharmacieList) {
+//       double distance = await Geolocator.distanceBetween(
+//         position.latitude,
+//         position.longitude,
+//         pharmacie.latitude!,
+//         pharmacie.longitude!,
+//       );
+
+//       if (distance < nearestDistance) {
+//         nearestDistance = distance;
+//         nearestPharmacie = pharmacie;
+//       }
+//     }
+
 //     setState(() {
 //       _locationMessage =
 //           'Latitude: ${position.latitude}\nLongitude: ${position.longitude}';
+//       isLoading = false;
 //     });
 //   }
 
 //   @override
 //   Widget build(BuildContext context) {
+//     final size = MediaQuery.of(context).size;
 //     return Scaffold(
 //       appBar: AppBar(
 //         title: Text('Liste des pharmacies'),
@@ -324,61 +375,97 @@ class _ListPharmaciesDetailsState extends State<ListPharmaciesDetails> {
 //           Center(
 //             child: Padding(
 //               padding: const EdgeInsets.all(8.0),
-//               child: ElevatedButton(
-//                 onPressed: _getCurrentLocation,
-//                 child: Text(
-//                   'Obtenir la localisation',
-//                   style: TextStyle(
-//                     fontSize: 16,
-//                   ),
-//                 ),
-//                 style: ElevatedButton.styleFrom(
-//                   primary: Color.fromARGB(
-//                       255, 22, 219, 101), // Couleur de fond du bouton
-//                   onPrimary: Colors.white, // Couleur du texte du bouton
-//                   padding: EdgeInsets.symmetric(
-//                       vertical: 15,
-//                       horizontal: 20), // Espacement interne du bouton
-//                   shape: RoundedRectangleBorder(
-//                     // Forme du bouton
-//                     borderRadius: BorderRadius.circular(10),
-//                   ),
-//                 ),
-//               ),
+//               child: isLoading
+//                   ? CircularProgressIndicator()
+//                   : ElevatedButton(
+//                       onPressed: _getCurrentLocation,
+//                       child: Text(
+//                         'Obtenir la localisation',
+//                         style: TextStyle(
+//                           fontSize: 16,
+//                         ),
+//                       ),
+//                       style: ElevatedButton.styleFrom(
+//                         primary: Color.fromARGB(
+//                             255, 22, 219, 101), // Couleur de fond du bouton
+//                         onPrimary: Colors.white, // Couleur du texte du bouton
+//                         padding: EdgeInsets.symmetric(
+//                             vertical: 15,
+//                             horizontal: 20), // Espacement interne du bouton
+//                         shape: RoundedRectangleBorder(
+//                           // Forme du bouton
+//                           borderRadius: BorderRadius.circular(10),
+//                         ),
+//                       ),
+//                     ),
 //             ),
 //           ),
-//           Padding(
-//             padding: const EdgeInsets.all(8.0),
-//             child: Text(
-//               _locationMessage,
-//               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-//             ),
+//           SizedBox(height: 20),
+//           Text(
+//             'Pharmacie la plus proche : ${nearestPharmacie?.user?.username ?? 'Aucune'}',
+//             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+//           ),
+//           SizedBox(height: 20),
+//           Text(
+//             _locationMessage,
+//             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
 //           ),
 //           Expanded(
 //             child: Obx(() {
 //               if (listPharmacieController.isListPharmacieLoading.value)
 //                 return Center(child: CircularProgressIndicator());
-//               else
+//               else {
 //                 return ListView.builder(
 //                   itemCount: listPharmacieController.pharmacieList.length,
 //                   itemBuilder: (context, index) {
 //                     final pharmacie =
 //                         listPharmacieController.pharmacieList[index];
-//                     return RadioListTile<Pharmacie>(
+//                     return ListTile(
 //                       title: Text(pharmacie.user?.username ?? ''),
 //                       subtitle: Text(
 //                           'Latitude: ${pharmacie.latitude}, Longitude: ${pharmacie.longitude}'),
-//                       value: pharmacie,
-//                       groupValue: selectedPharmacie,
-//                       onChanged: (Pharmacie? value) {
-//                         setState(() {
-//                           selectedPharmacie = value;
-//                         });
-//                       },
 //                     );
 //                   },
 //                 );
+//               }
 //             }),
+//           ),
+//           Center(
+//             child: InkWell(
+//               onTap: () async {
+//                 print(nearestPharmacie?.id);
+//                 await CommandeController.passerCommande(
+//                   '1',
+//                   widget.image,
+//                   widget.image1,
+//                   widget.commentaire ?? '',
+//                   widget.confirmationAdresse,
+//                   nearestPharmacie!.id!.toString() ?? '',
+//                   context,
+//                 );
+//                 Navigator.push(context,
+//                     MaterialPageRoute(builder: (context) => Payment()));
+//               },
+//               borderRadius: BorderRadius.circular(20),
+//               child: Container(
+//                 width: size.width * 0.8,
+//                 decoration: BoxDecoration(
+//                     borderRadius: BorderRadius.circular(30),
+//                     color: Color.fromARGB(255, 22, 219, 101)),
+//                 padding: EdgeInsets.symmetric(vertical: 20),
+//                 alignment: Alignment.center,
+//                 child: Text(
+//                   'Commander',
+//                   style: TextStyle(
+//                       color: Colors.white,
+//                       fontWeight: FontWeight.bold,
+//                       fontSize: 25),
+//                 ),
+//               ),
+//             ),
+//           ),
+//           SizedBox(
+//             height: 40,
 //           ),
 //         ],
 //       ),
@@ -390,6 +477,7 @@ class _ListPharmaciesDetailsState extends State<ListPharmaciesDetails> {
 // // import 'package:get/get.dart';
 // // import 'package:pharmacy_app/Patient/controller/list_pharmacies_controller.dart';
 // // import 'package:pharmacy_app/pharmacien/model/pharmacien_model.dart';
+// // import 'package:geolocator/geolocator.dart';
 
 // // class ListPharmaciesDetails extends StatefulWidget {
 // //   const ListPharmaciesDetails({Key? key}) : super(key: key);
@@ -403,6 +491,68 @@ class _ListPharmaciesDetailsState extends State<ListPharmaciesDetails> {
 // //       Get.put(ListPharmacieController());
 
 // //   Pharmacie? selectedPharmacie;
+// //   String _locationMessage = '';
+
+// //   Future<void> _getCurrentLocation() async {
+// //     bool serviceEnabled;
+// //     LocationPermission permission;
+
+// //     // Check if location services are enabled
+// //     serviceEnabled = await Geolocator.isLocationServiceEnabled();
+// //     if (!serviceEnabled) {
+// //       // Location services are not enabled, prompt the user to enable them
+// //       return showDialog(
+// //         context: context,
+// //         builder: (BuildContext context) {
+// //           return AlertDialog(
+// //             title: Text("Location Services Disabled"),
+// //             content: Text(
+// //                 "Please enable location services to access your location."),
+// //             actions: [
+// //               TextButton(
+// //                 child: Text("OK"),
+// //                 onPressed: () {
+// //                   Navigator.pop(context);
+// //                 },
+// //               ),
+// //             ],
+// //           );
+// //         },
+// //       );
+// //     }
+
+// //     // Request location permissions
+// //     permission = await Geolocator.requestPermission();
+// //     if (permission == LocationPermission.denied) {
+// //       // Location permissions are denied, show error message
+// //       return showDialog(
+// //         context: context,
+// //         builder: (BuildContext context) {
+// //           return AlertDialog(
+// //             title: Text("Location Permissions Denied"),
+// //             content: Text(
+// //                 "Please grant location permissions to access your location."),
+// //             actions: [
+// //               TextButton(
+// //                 child: Text("OK"),
+// //                 onPressed: () {
+// //                   Navigator.pop(context);
+// //                 },
+// //               ),
+// //             ],
+// //           );
+// //         },
+// //       );
+// //     }
+
+// //     // Get current location
+// //     final position = await Geolocator.getCurrentPosition(
+// //         desiredAccuracy: LocationAccuracy.high);
+// //     setState(() {
+// //       _locationMessage =
+// //           'Latitude: ${position.latitude}\nLongitude: ${position.longitude}';
+// //     });
+// //   }
 
 // //   @override
 // //   Widget build(BuildContext context) {
@@ -410,29 +560,121 @@ class _ListPharmaciesDetailsState extends State<ListPharmaciesDetails> {
 // //       appBar: AppBar(
 // //         title: Text('Liste des pharmacies'),
 // //       ),
-// //       body: Obx(() {
-// //         if (listPharmacieController.isListPharmacieLoading.value)
-// //           return Center(child: CircularProgressIndicator());
-// //         else
-// //           return ListView.builder(
-// //             itemCount: listPharmacieController.pharmacieList.length,
-// //             itemBuilder: (context, index) {
-// //               final pharmacie = listPharmacieController.pharmacieList[index];
-// //               return RadioListTile<Pharmacie>(
-// //                 title: Text(pharmacie.user?.username ?? ''),
-// //                 subtitle: Text(
-// //                     'Latitude: ${pharmacie.latitude}, Longitude: ${pharmacie.longitude}'),
-// //                 value: pharmacie,
-// //                 groupValue: selectedPharmacie,
-// //                 onChanged: (Pharmacie? value) {
-// //                   setState(() {
-// //                     selectedPharmacie = value;
-// //                   });
-// //                 },
-// //               );
-// //             },
-// //           );
-// //       }),
+// //       body: Column(
+// //         crossAxisAlignment: CrossAxisAlignment.start,
+// //         children: [
+// //           Center(
+// //             child: Padding(
+// //               padding: const EdgeInsets.all(8.0),
+// //               child: ElevatedButton(
+// //                 onPressed: _getCurrentLocation,
+// //                 child: Text(
+// //                   'Obtenir la localisation',
+// //                   style: TextStyle(
+// //                     fontSize: 16,
+// //                   ),
+// //                 ),
+// //                 style: ElevatedButton.styleFrom(
+// //                   primary: Color.fromARGB(
+// //                       255, 22, 219, 101), // Couleur de fond du bouton
+// //                   onPrimary: Colors.white, // Couleur du texte du bouton
+// //                   padding: EdgeInsets.symmetric(
+// //                       vertical: 15,
+// //                       horizontal: 20), // Espacement interne du bouton
+// //                   shape: RoundedRectangleBorder(
+// //                     // Forme du bouton
+// //                     borderRadius: BorderRadius.circular(10),
+// //                   ),
+// //                 ),
+// //               ),
+// //             ),
+// //           ),
+// //           Padding(
+// //             padding: const EdgeInsets.all(8.0),
+// //             child: Text(
+// //               _locationMessage,
+// //               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+// //             ),
+// //           ),
+// //           Expanded(
+// //             child: Obx(() {
+// //               if (listPharmacieController.isListPharmacieLoading.value)
+// //                 return Center(child: CircularProgressIndicator());
+// //               else
+// //                 return ListView.builder(
+// //                   itemCount: listPharmacieController.pharmacieList.length,
+// //                   itemBuilder: (context, index) {
+// //                     final pharmacie =
+// //                         listPharmacieController.pharmacieList[index];
+// //                     return RadioListTile<Pharmacie>(
+// //                       title: Text(pharmacie.user?.username ?? ''),
+// //                       subtitle: Text(
+// //                           'Latitude: ${pharmacie.latitude}, Longitude: ${pharmacie.longitude}'),
+// //                       value: pharmacie,
+// //                       groupValue: selectedPharmacie,
+// //                       onChanged: (Pharmacie? value) {
+// //                         setState(() {
+// //                           selectedPharmacie = value;
+// //                         });
+// //                       },
+// //                     );
+// //                   },
+// //                 );
+// //             }),
+// //           ),
+// //         ],
+// //       ),
 // //     );
 // //   }
 // // }
+
+// // // import 'package:flutter/material.dart';
+// // // import 'package:get/get.dart';
+// // // import 'package:pharmacy_app/Patient/controller/list_pharmacies_controller.dart';
+// // // import 'package:pharmacy_app/pharmacien/model/pharmacien_model.dart';
+
+// // // class ListPharmaciesDetails extends StatefulWidget {
+// // //   const ListPharmaciesDetails({Key? key}) : super(key: key);
+
+// // //   @override
+// // //   State<ListPharmaciesDetails> createState() => _ListPharmaciesDetailsState();
+// // // }
+
+// // // class _ListPharmaciesDetailsState extends State<ListPharmaciesDetails> {
+// // //   final ListPharmacieController listPharmacieController =
+// // //       Get.put(ListPharmacieController());
+
+// // //   Pharmacie? selectedPharmacie;
+
+// // //   @override
+// // //   Widget build(BuildContext context) {
+// // //     return Scaffold(
+// // //       appBar: AppBar(
+// // //         title: Text('Liste des pharmacies'),
+// // //       ),
+// // //       body: Obx(() {
+// // //         if (listPharmacieController.isListPharmacieLoading.value)
+// // //           return Center(child: CircularProgressIndicator());
+// // //         else
+// // //           return ListView.builder(
+// // //             itemCount: listPharmacieController.pharmacieList.length,
+// // //             itemBuilder: (context, index) {
+// // //               final pharmacie = listPharmacieController.pharmacieList[index];
+// // //               return RadioListTile<Pharmacie>(
+// // //                 title: Text(pharmacie.user?.username ?? ''),
+// // //                 subtitle: Text(
+// // //                     'Latitude: ${pharmacie.latitude}, Longitude: ${pharmacie.longitude}'),
+// // //                 value: pharmacie,
+// // //                 groupValue: selectedPharmacie,
+// // //                 onChanged: (Pharmacie? value) {
+// // //                   setState(() {
+// // //                     selectedPharmacie = value;
+// // //                   });
+// // //                 },
+// // //               );
+// // //             },
+// // //           );
+// // //       }),
+// // //     );
+// // //   }
+// // // }

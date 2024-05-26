@@ -92,10 +92,7 @@ class PanierScreen extends StatelessWidget {
                         onPressed: () {
                           // Get.find<CommandController>().createCommand();
                           navigateToAnotherScreenWithSlideTransitionFromRightToLeft(
-                              context,
-                              Confirmation(
-                                confirmation_adresse: '',
-                              ));
+                              context, Confirmation());
                         },
                         child: const Text('Suivant',
                             style: TextStyle(
