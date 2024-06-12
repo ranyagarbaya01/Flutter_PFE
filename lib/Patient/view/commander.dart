@@ -15,8 +15,8 @@ class PassCommand extends StatefulWidget {
 }
 
 class _PassCommandState extends State<PassCommand> {
-   File ?_image;
-   File ? _image1;
+  File? _image;
+  File? _image1;
   TextEditingController _commentaireController = TextEditingController();
   TextEditingController _adresseController = TextEditingController();
 

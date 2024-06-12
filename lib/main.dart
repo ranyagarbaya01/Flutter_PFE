@@ -1,36 +1,37 @@
 import 'package:flutter/material.dart';
-import 'package:pharmacy_app/EndPoint/logout_view.dart';
-import 'package:pharmacy_app/Home_pages/home_screen.dart';
 import 'package:pharmacy_app/Home_pages/homepage.dart';
-import 'package:pharmacy_app/Patient/view/googlemap.dart';
 import 'package:pharmacy_app/Patient/view/how_command.dart';
-import 'package:pharmacy_app/Patient/view/list_pharmacies_view.dart';
-import 'package:pharmacy_app/Patient/view/medicament_command.dart';
-import 'package:pharmacy_app/Patient/view/panier_screen.dart';
-import 'package:pharmacy_app/livreur/view/livraison_view.dart';
-import 'package:pharmacy_app/livreur/view/signin_view.dart';
-import 'package:pharmacy_app/pharmacien/view/pharmacien_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  sharedPref = await SharedPreferences.getInstance();
-  //Get.put(LivraisonController()); // Put the LivraisonController instance in GetX storage
+  final SharedPreferences sharedPreferences =
+      await SharedPreferences.getInstance();
+  final token = sharedPreferences.getString('token');
+  print(sharedPreferences.getKeys()); //
+  print("token : $token"); //just nheb naaref 3leh lena temchi w ghadi le dkika
+  Widget screen;
+  if (token != null) {
+    screen = HowCommand();
+  } else {
+    screen = HomePage();
+  }
 
-//await RenoteMedicamentService().get();
-  runApp(const MyApp());
+  runApp(MyApp(screen: screen));
 }
 
 SharedPreferences? sharedPref;
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  Widget screen;
+
+  MyApp({super.key, required this.screen});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: HomePage(),
+      home: screen,
     );
     /*GetMaterialApp(
       getPages: AppPage.list,

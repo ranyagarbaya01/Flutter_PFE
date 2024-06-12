@@ -26,7 +26,6 @@ class LivraisonListDataTable extends StatelessWidget {
               onPressed: () {
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => HomePage()));
-                // Mettez ici la logique pour effectuer la déconnexion
               },
               icon: Icon(
                 Icons.logout,
@@ -36,7 +35,7 @@ class LivraisonListDataTable extends StatelessWidget {
           ],
         ),
         body: Container(
-          padding: EdgeInsets.all(8.0), // Add padding around the DataTable
+          padding: EdgeInsets.all(8.0),
           child: Obx(() {
             if (livraisonController.isListLivraisonLoading.value) {
               return Center(child: CircularProgressIndicator());
@@ -58,38 +57,49 @@ class LivraisonListDataTable extends StatelessWidget {
                     rows: livraisonController.livraisonList.map((livraisons) {
                       return DataRow(
                         cells: <DataCell>[
-                          DataCell(ElevatedButton(
-                              style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all(
-                                  livraisons.orderStatus == "en livraison"
-                                      ? Colors.green
-                                      : Colors.grey,
+                          DataCell(Row(
+                            children: [
+                              ElevatedButton(
+                                style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all(
+                                    livraisons.orderStatus == "en cours" ||
+                                            livraisons.orderStatus ==
+                                                "en livraison"
+                                        ? Colors.green
+                                        : Colors.grey,
+                                  ),
                                 ),
+                                onPressed: livraisons.orderStatus ==
+                                            "en cours" ||
+                                        livraisons.orderStatus == "en livraison"
+                                    ? () async {
+                                        livraisonController
+                                            .updateLivraisonStatus(
+                                                livraisons.id_livraison!);
+                                      }
+                                    : null,
+                                child: Text("Livrer"),
                               ),
-                              onPressed:
-                                  livraisons.orderStatus == "en livraison"
-                                      ? () {
-                                          livraisonController.updateLivraison(
-                                              livraisons.id_livraison!);
-                                        }
-                                      : null,
-                              child: Row(
-                                children: [
-                                  Text("Livrer"),
-                                  livraisonController.isLivraisonUpdating ==
-                                          true
-                                      ? SizedBox(width: 5)
-                                      : SizedBox(width: 0),
-                                  livraisonController.isLivraisonUpdating ==
-                                          true
-                                      ? SizedBox(
-                                          height: 10,
-                                          width: 10,
-                                          child: CircularProgressIndicator(),
-                                        )
-                                      : SizedBox(width: 0),
-                                ],
-                              ))),
+                              SizedBox(width: 8),
+                              ElevatedButton(
+                                style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all(
+                                    livraisons.isTermine == false
+                                        ? Colors.orange
+                                        : Colors.grey,
+                                  ),
+                                ),
+                                onPressed: livraisons.isTermine == false
+                                    ? () async {
+                                        livraisonController
+                                            .updateLivraisonTermine(
+                                                livraisons.id_livraison!);
+                                      }
+                                    : null,
+                                child: Text("Accepted"),
+                              ),
+                            ],
+                          )),
                           DataCell(Text(livraisons.patientId.toString())),
                           DataCell(Text(livraisons.patientName.toString())),
                           DataCell(

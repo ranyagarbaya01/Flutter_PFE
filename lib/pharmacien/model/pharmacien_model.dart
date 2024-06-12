@@ -80,6 +80,6 @@ class Pharmacie {
 
   @override
   String toString() {
-    return 'Pharmacie{id: $id}'; // Replace 'id' with the actual field name for the id in the Pharmacie class
+    return 'Pharmacie{id: $id}';
   }
 }

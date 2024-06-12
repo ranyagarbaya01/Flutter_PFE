@@ -18,4 +18,15 @@ class PharmacieService {
       throw Exception('Failed to create pharmacie');
     }
   }
+
+  static Future<List<int>> getAllCodesec() async {
+    final response = await http.get(Uri.parse('$baseUrl/codesec/'));
+
+    if (response.statusCode == 200) {
+      List<dynamic> data = jsonDecode(response.body);
+      return data.map((item) => item as int).toList();
+    } else {
+      throw Exception('Failed to fetch codesec');
+    }
+  }
 }

@@ -1,27 +1,5 @@
 import 'package:pharmacy_app/Patient/model/patient_model.dart';
 
-// class Users {
-//   String? username;
-//   String? password;
-//   bool? isActive;
-
-//   Users({this.username, this.password, this.isActive});
-
-//   Users.fromJson(Map<String, dynamic> json) {
-//     username = json['username'];
-//     password = json['password'];
-//     isActive = json['is_active'];
-//   }
-
-//   Map<String, dynamic> toJson() {
-//     final Map<String, dynamic> data = new Map<String, dynamic>();
-//     data['username'] = this.username;
-//     data['password'] = this.password;
-//     data['is_active'] = this.isActive;
-//     return data;
-//   }
-// }
-
 class Livreur {
   User? user;
   String? nom;

@@ -40,6 +40,8 @@ class RoundedPasswordInput extends StatelessWidget {
   late bool? isObsecure;
   TextInputType? keyboardType;
   String? errorMessage;
+  final String? Function(String?)? validator; // Add this line
+
   RoundedPasswordInput({
     super.key,
     required this.hint,
@@ -48,6 +50,7 @@ class RoundedPasswordInput extends StatelessWidget {
     this.isObsecure,
     this.keyboardType,
     this.errorMessage,
+    this.validator, // Add this line
   });
 
   @override
@@ -58,12 +61,13 @@ class RoundedPasswordInput extends StatelessWidget {
         keyboardType: keyboardType ?? TextInputType.text,
         cursorColor: Colors.black,
         obscureText: isObsecure ?? false,
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return errorMessage ?? 'Ce champ est obligatoire';
-          }
-          return null;
-        },
+        validator: validator, // Add this line
+        // validator: (value) {
+        //   if (value == null || value.isEmpty) {
+        //     return errorMessage ?? 'Ce champ est obligatoire';
+        //   }
+        //   return null;
+        // },
         decoration: InputDecoration(
             icon: Icon(
               icon,

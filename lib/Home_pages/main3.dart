@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pharmacy_app/Home_pages/home_screen.dart';
 
-
 class WelcomePage3 extends StatefulWidget {
   const WelcomePage3({super.key});
 

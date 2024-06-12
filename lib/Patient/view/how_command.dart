@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:pharmacy_app/Patient/view/commander.dart';
-import 'package:pharmacy_app/Patient/view/googlemap.dart';
+import 'package:pharmacy_app/Home_pages/home_screen.dart';
+import 'package:pharmacy_app/Home_pages/homepage.dart';
 import 'package:pharmacy_app/Patient/view/list_command.dart';
 import 'package:pharmacy_app/Patient/view/medicament_command.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../core/navigation_with_transition.dart';
+import 'commander.dart';
+import 'login_signup.dart';
 
 class HowCommand extends StatefulWidget {
   const HowCommand({super.key});
@@ -15,9 +20,27 @@ class _HowCommandState extends State<HowCommand> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //     // leading: const BackButton(),
-      //     ),
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        centerTitle: true,
+        title: Text('Accueil'),
+        //leading: none,
+        actions: [
+          IconButton(
+            onPressed: () async {
+              final SharedPreferences sharedPreferences =
+                  await SharedPreferences.getInstance();
+              sharedPreferences.remove('token');
+              navigateToAnotherScreenWithSlideTransitionFromRightToLeftPushReplacement(
+                  context, HomeScreen());
+            },
+            icon: Icon(
+              Icons.logout,
+              color: Color.fromARGB(255, 22, 219, 101),
+            ),
+          ),
+        ],
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -28,7 +51,7 @@ class _HowCommandState extends State<HowCommand> {
                     255, 22, 219, 101), // Custom background color
                 minimumSize: Size(200, 100), // Custom button size
               ),
-              onPressed: () {
+              onPressed: () async {
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => PassCommand()));
               },

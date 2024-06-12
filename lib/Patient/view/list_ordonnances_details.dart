@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:pharmacy_app/EndPoint/url_const.dart';
 import 'package:pharmacy_app/Patient/controller/list_command_controller.dart';
 
+
+
 class ListOrdonnancesDetails extends StatefulWidget {
   const ListOrdonnancesDetails({super.key});
 

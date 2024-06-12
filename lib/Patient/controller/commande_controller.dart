@@ -62,28 +62,6 @@ class CommandeController {
       );
       return;
     }
-    // Vérifier si la pharmacie est sélectionnée
-    // if (pharmacieLocation == null || pharmacieLocation.isEmpty) {
-    //   showDialog(
-    //     context: context,
-    //     builder: (BuildContext context) {
-    //       return AlertDialog(
-    //         title: Text('Erreur'),
-    //         content: Text(
-    //             'Veuillez sélectionner une pharmacie avant de passer la commande.'),
-    //         actions: <Widget>[
-    //           TextButton(
-    //             onPressed: () {
-    //               Navigator.of(context).pop();
-    //             },
-    //             child: Text('OK'),
-    //           ),
-    //         ],
-    //       );
-    //     },
-    //   );
-    //   return;
-    // }
 
     final String apiUrl = '$baseUrl/commandes/';
 
@@ -102,8 +80,8 @@ class CommandeController {
     request.fields['confirmadresse'] = confirmAdresse;
     request.fields['pharmacies'] = pharmacieId;
     await getToken().then((token) {
-      request.headers['Authorization'] = 'Token $token';
-    });
+      request.headers['Authorization'] = 'Bearer $token';
+    }); // hedhi el tarika el s7i7a mtaa este3mel gettoken behi taw aatini el wahda eli ki tabaath beha taatikk anonymuser bhyy
 
     // Ajouter l'image de l'ordonnance
     var ordonnanceStream = http.ByteStream(ordonnanceImageFile.openRead());

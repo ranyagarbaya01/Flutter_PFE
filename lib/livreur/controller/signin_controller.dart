@@ -9,6 +9,8 @@ import 'package:pharmacy_app/Patient/view/how_command.dart';
 import 'package:pharmacy_app/core/navigation_with_transition.dart';
 import 'package:flutter/material.dart';
 
+int loggedInLivreurId = 1; // This should be fetched from the login response
+
 class SignInController extends GetxController {
   final LivreurService _livreurService = LivreurService();
   RxBool isLoading = false.obs;

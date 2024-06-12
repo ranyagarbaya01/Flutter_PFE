@@ -50,6 +50,18 @@ class _LoginPageState extends State<LoginPage>
     super.dispose();
   }
 
+  String? validatePassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Vous devez entrer un mot de passe valide';
+    } else if (value.length < 8) {
+      return 'Le mot de passe doit contenir au moins 8 caractères';
+    } else if (!RegExp(r'[0-9]').hasMatch(value)) {
+      return 'Le mot de passe doit contenir au moins un chiffre';
+    }
+    // Add more conditions if needed
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -149,6 +161,7 @@ class _LoginPageState extends State<LoginPage>
                                 isObsecure: true,
                                 errorMessage:
                                     'Vous devez entrer un mot de passe valide',
+                                validator: validatePassword,
                               ),
                             ])),
 
@@ -171,9 +184,12 @@ class _LoginPageState extends State<LoginPage>
                                         true, // Assuming email is used as username
                                   );
                                   await getToken();
+                                  // cho , heya el token tet7at fel shared preferences (cache) ba3ed ma enty taamel login yaani tetb3ath el request lele django
+                                  // en plus getToken() rahi just tjib el token mel cache w tamelelha return chuf ...
+                                  // ma3neha lahne ken berasmi t7eb tjib el token rak lazem t7otha f variable bch testaamelha,
+                                  // snn b sifa 3ama ma test7a9hech lahne,par contre test7a9ha kif tji bch tab3ath aya request lele serveur w test7a9 el token
                                   loginController.login(user, context);
                                 }
-                               
                               },
                               widget: loginController.isLoading.value == true
                                   ? SizedBox(
@@ -285,6 +301,7 @@ class _LoginPageState extends State<LoginPage>
                                     isObsecure: true,
                                     controller: _passwordController,
                                     icon: Icons.lock,
+                                    validator: validatePassword,
                                   ),
                                 ])),
                             SizedBox(height: 10),

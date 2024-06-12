@@ -28,19 +28,19 @@ class _ListCommandState extends State<ListCommand> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Liste des commandes'),
-        actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => HomePage()));
-              // Mettez ici la logique pour effectuer la déconnexion
-            },
-            icon: Icon(
-              Icons.logout,
-              color: Color.fromARGB(255, 22, 219, 101),
-            ),
-          ),
-        ],
+        // actions: [
+        //   IconButton(
+        //     onPressed: () {
+        //       Navigator.push(
+        //           context, MaterialPageRoute(builder: (context) => HomePage()));
+        //       // Mettez ici la logique pour effectuer la déconnexion
+        //     },
+        //     icon: Icon(
+        //       Icons.logout,
+        //       color: Color.fromARGB(255, 22, 219, 101),
+        //     ),
+        //   ),
+        // ],
       ),
       body: Obx(() {
         if (listCommandController.isListCommandLoading.value)

@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:pharmacy_app/Livreur/model/livreur_model.dart';
 import 'package:pharmacy_app/Patient/components/rounded_button.dart';
 import 'package:pharmacy_app/Patient/components/rounded_input_password.dart';
 import 'package:pharmacy_app/Patient/model/patient_model.dart';
 import 'package:pharmacy_app/livreur/controller/signin_controller.dart';
 import 'package:pharmacy_app/livreur/controller/signup_controller.dart';
-import 'package:pharmacy_app/livreur/model/livreur_model.dart';
 import 'package:pharmacy_app/livreur/view/signin_view.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -29,6 +27,71 @@ class _SignUpPageState extends State<SignUpPage> {
   RegistrationLivreurController registerController =
       Get.put(RegistrationLivreurController());
   SignInController signInController = Get.put(SignInController());
+
+  String? validateEmail(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Veuillez entrer une adresse e-mail valide';
+    } else if (!value.contains('@')) {
+      return 'L\'adresse e-mail doit contenir un @';
+    }
+    return null;
+  }
+
+  String? validatePassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Vous devez entrer un mot de passe valide';
+    } else if (value.length < 8) {
+      return 'Le mot de passe doit contenir au moins 8 caractères';
+    } else if (!RegExp(r'[0-9]').hasMatch(value)) {
+      return 'Le mot de passe doit contenir au moins un chiffre';
+    }
+    return null;
+  }
+
+  String? validatePhoneNumber(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Veuillez entrer un numéro de téléphone valide';
+    } else if (value.length != 8) {
+      return 'Le numéro de téléphone doit contenir 8 chiffres';
+    } else if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
+      return 'Le numéro de téléphone doit contenir uniquement des chiffres';
+    }
+    return null;
+  }
+
+  void _submitForm() {
+    if (_formKey2.currentState!.validate()) {
+      // Create a User object with the entered username and isActive value
+      User user = User(
+        username: _nomutilisateurController.text,
+        password: _passwordController.text,
+        isActive: true, // Assuming email is used as username
+      );
+
+      registerController.register(
+        user,
+        _nomController.text,
+        _prenomController.text,
+        int.parse(_numTelController.text),
+        _emailController.text,
+      );
+
+      // Show a success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Inscription réussie!')),
+      );
+
+      // Navigate to the SignInPage
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => SignInPage()));
+    } else {
+      // Show an error message if the form is not valid
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text('Veuillez corriger les erreurs dans le formulaire.')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -93,49 +156,26 @@ class _SignUpPageState extends State<SignUpPage> {
                         icon: Icons.phone,
                         hint: 'Numéro de téléphone',
                         controller: _numTelController,
+                        validator: validatePhoneNumber,
                       ),
                       RoundedPasswordInput(
                         icon: Icons.mail,
                         hint: 'E-mail',
                         controller: _emailController,
+                        validator: validateEmail,
                       ),
                       RoundedPasswordInput(
                         hint: 'Mot de passe',
                         isObsecure: true,
                         controller: _passwordController,
                         icon: Icons.lock,
+                        validator: validatePassword,
                       ),
                     ])),
                 SizedBox(height: 10),
                 RoundedButton(
                     title: "S'inscrire",
-                    onPressed: () {
-                      if (_formKey2.currentState!.validate()) {
-                        // Create a User object with the entered username and isActive value
-                        User user = User(
-                          username: _nomutilisateurController.text,
-                          password: _passwordController.text,
-                          isActive: true, // Assuming email is used as username
-                        );
-
-                        registerController.register(
-                          user,
-                          _nomController.text,
-                          _prenomController.text,
-                          int.parse(_numTelController.text),
-                          _emailController.text,
-                        );
-
-                        // Si le formulaire est valide, affichez un message de réussite
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Inscription réussie!')),
-                        );
-                      }
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => SignInPage()));
-                    },
+                    onPressed: _submitForm,
                     widget: signInController.isLoading.value == true
                         ? SizedBox(
                             height: 15,
